@@ -31,13 +31,10 @@ except Exception:
 if os.path.exists('/workspace'):
     # Entorno Docker
     DEFAULT_MODEL_PATH = '/workspace/models/model.onnx'
-    DEFAULT_CONFIG_FILE = '/workspace/source/indalecio07052025.pfs'
+    DEFAULT_CONFIG_FILE = '/workspace/source/xx.pfs'
     DEFAULT_EMULATION_PATH = '/workspace/images'
 else:
-    # Entorno local
-    DEFAULT_MODEL_PATH = '/home/gemma/Repositorios/rachael-vision-classifier/models/converted_onnx_20250804_080136/model.onnx'
-    DEFAULT_CONFIG_FILE = '/home/gemma/Arinapin/Proyectos/Indalecio/codigo/indalecio07052025.pfs'
-    DEFAULT_EMULATION_PATH = '/home/gemma/Arinapin/Proyectos/Indalecio/codigo/emulacion'
+    print('workspace no creado')
 
 def load_labels_from_config(model_path):
     """Intenta cargar labels desde conversion_config.json junto al modelo"""
