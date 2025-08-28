@@ -1,0 +1,23 @@
+{
+  "original_model_dir": "/workspace/models/20250804_075223",
+  "conversion_format": "onnx",
+  "model_name": "mobilenet_v2",
+  "classes": [
+    "arandela",
+    "ok",
+    "pobres",
+    "valvula",
+    "varios"
+  ],
+  "timestamp": "20250804_080136",
+  "input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "num_classes": 5,
+  "result_files": [
+    "model.onnx (9.7 MB)"
+  ]
+}

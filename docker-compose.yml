@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  inference:
+    image: jetson-infer:l4t-ml-r32.6.1   
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: jetson_inference
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - SOURCE_DIR=/workspace/source
+      - MODEL_PATH=/workspace/models/model.onnx
+      - LABELS_PATH=/workspace/models/labels.txt
+      - IMAGES_PATH=/workspace/images
+      - FP16=1
+      - SAVE_ENGINE=1
+      # Cache de modelos PyTorch persistente
+      - pytorch_cache:/tmp/torch_cache
+      # Ejemplo de tamaño de entrada para tu runner TRT si lo usas
+      - TRT_H=224
+      - TRT_W=224
+      - TRT_BATCH=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./Source:/workspace/source:rw
+      - ./Models:/workspace/models:rw
+      - ./Images:/workspace/images:rw
+      - ./Output:/workspace/output_images:rw
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+    network_mode: host   # útil si expones Gradio/FastAPI sin NAT
+    ipc: host            # por si PyTorch necesita shared memory
+    working_dir: /workspace
+    command: ["python3", "/workspace/source/RACHAEL.py"]
