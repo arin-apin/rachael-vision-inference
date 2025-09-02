@@ -162,86 +162,16 @@ class RachaelGUI(ttk.Frame):
         self.slider_label.configure(text="Tolerance level "+str(int(self.cam_module.tolerance*100)))
 
     def show_visor_dialog(self):
-        try:
-            # Obtener directorio de imágenes del cam_module
-            output_path = getattr(self.cam_module, 'output_directory', 'output_images')
-            print(f"[INFO] Abriendo visor con directorio: {output_path}")
-            
-            # Verificar que existe el directorio
-            if not os.path.exists(output_path):
-                os.makedirs(output_path, exist_ok=True)
-                print(f"[INFO] Directorio creado: {output_path}")
-            
-            # Usar siempre el visor simple y robusto en lugar del complejo
-            visor_toplevel = tk.Toplevel(self.root)
-            visor_toplevel.title("Visor - Imagenes NOK")
-            screen_width = self.root.winfo_screenwidth()
-            screen_height = self.root.winfo_screenheight()
-            visor_toplevel.geometry(f"{screen_width}x{screen_height}")
-            
-            # Crear visor robusto
-            self._create_robust_image_viewer(visor_toplevel, output_path)
-            
-        except Exception as e:
-            print(f"[ERROR] Error abriendo visor: {e}")
-            import traceback
-            traceback.print_exc()
-            messagebox.showerror("Error", f"No se pudo abrir el visor: {str(e)}")
-    
-    def _create_simple_image_viewer(self, parent, image_dir):
-        """Crea un visor simple de imágenes como fallback"""
-        try:
-            import glob
-            
-            # Frame principal
-            main_frame = ttk.Frame(parent)
-            main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-            
-            # Label de información
-            info_label = ttk.Label(main_frame, text=f"Directorio: {image_dir}")
-            info_label.pack(pady=5)
-            
-            # Buscar imágenes
-            image_patterns = ['*.jpg', '*.jpeg', '*.png', '*.bmp']
-            image_files = []
-            for pattern in image_patterns:
-                image_files.extend(glob.glob(os.path.join(image_dir, pattern)))
-            
-            if image_files:
-                # Ordenar por fecha de modificación (más recientes primero)
-                image_files.sort(key=os.path.getmtime, reverse=True)
-                
-                # Mostrar información
-                count_label = ttk.Label(main_frame, text=f"Imágenes encontradas: {len(image_files)}")
-                count_label.pack(pady=5)
-                
-                # Lista de archivos
-                listbox_frame = ttk.Frame(main_frame)
-                listbox_frame.pack(fill=tk.BOTH, expand=True, pady=5)
-                
-                scrollbar = ttk.Scrollbar(listbox_frame)
-                scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-                
-                listbox = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set)
-                for img_file in image_files:
-                    basename = os.path.basename(img_file)
-                    listbox.insert(tk.END, basename)
-                listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-                scrollbar.config(command=listbox.yview)
-                
-            else:
-                no_images_label = ttk.Label(main_frame, text="No se encontraron imágenes NOK")
-                no_images_label.pack(pady=20)
-            
-            # Botón cerrar
-            close_btn = ttk.Button(main_frame, text="Cerrar", command=parent.destroy)
-            close_btn.pack(pady=10)
-            
-        except Exception as e:
-            print(f"[ERROR] Error en visor simple: {e}")
-            # Último fallback - solo un label con error
-            error_label = ttk.Label(parent, text=f"Error accediendo a imágenes: {str(e)}")
-            error_label.pack(pady=20)
+        self.visor_dialog = tk.Toplevel(self.root)
+        self.visor_dialog.title("Visor")
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.visor_dialog.winfo_toplevel().geometry(f"{screen_width}x{screen_height}")
+        
+        # Obtener directorio de salida del cam_module
+        output_dir = getattr(self.cam_module, 'output_directory', '/tmp/output_images')
+        self.visor_dialog = ImageMatrixWindow(master=self.visor_dialog, path=output_dir)
+        self.root.wait_window(self.visor_dialog)
 
     def show_config_dialog(self):
         if self.password_dialog:
