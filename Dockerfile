@@ -9,7 +9,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Dependencias del sistema (incluye Tk si usas tkinter)
 RUN apt-get update && apt-get install -y \
     python3-pip python3-dev git \
-    python3-opencv libopencv-dev \
     libglib2.0-0 libgl1-mesa-glx \
     python3-tk \
     --no-install-recommends && \
@@ -17,17 +16,17 @@ RUN apt-get update && apt-get install -y \
    
 
 # Herramientas Python compatibles con Py3.6 en JP4.6
-RUN python3 -m pip install --upgrade pip==23.2.1 setuptools==65.7.0 wheel==0.38.4 && \
+RUN python3 -m pip install --upgrade "pip==21.3.1" "setuptools==59.6.0" "wheel==0.37.1" && \
     python3 -m pip install --no-cache-dir \
-      numpy==1.19.5 pillow==9.0.1 ttkthemes==3.2.2 \
-      onnx==1.10.2 cuda-python==12.2.0
+      numpy==1.19.5 pillow==8.4.0 ttkthemes==3.2.2 \
+      onnx==1.10.2 pycuda==2021.1
 
 # --- Instalar pypylon desde pip ---
 RUN python3 -m pip install --no-cache-dir pypylon
 
 # Estructura de trabajo y volúmenes (se montarán desde docker-compose)
 WORKDIR /workspace
-RUN mkdir -p /workspace/models /workspace/images /workspace/source /workspace/output_images 
+RUN mkdir -p /workspace/models /workspace/images /workspace/source /workspace/output_images /workspace/csv_outputs 
 
 # Variables de entorno típicas para la app 
 ENV SOURCE_DIR=/workspace/source \

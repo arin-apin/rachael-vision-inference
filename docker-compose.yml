@@ -31,7 +31,9 @@ services:
       - ./Source:/workspace/source:rw
       - ./Models:/workspace/models:rw
       - ./Images:/workspace/images:rw
+      - ./CSV:/workspace/csv_outputs:rw
       - ./Output:/workspace/output_images:rw
+
     deploy:
       resources:
         reservations:
