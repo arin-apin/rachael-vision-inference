@@ -41,9 +41,9 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    restart: unless-stopped
+    restart: no
 
     network_mode: host   # útil si expones Gradio/FastAPI sin NAT
     ipc: host            # por si PyTorch necesita shared memory
     working_dir: /workspace
-    command: ["python3", "/workspace/source/RACHAEL.py"]
+    command: ["python3", "/workspace/source/RACHAEL.py" , "--emu"]
